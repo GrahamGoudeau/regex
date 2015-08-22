@@ -6,13 +6,59 @@
 #include <stdio.h>
 
 typedef struct state_node {
+    bool receive_any_character;
+    char state_char;
+
     int num_connections;
     struct state_node *connections_list;
-    bool fail;
-    bool success;
+
+    bool state_fail;
+    bool state_success;
 } state_node;
 
 typedef state_node *state_node_p;
+
+static const char COMMAND_CHARS[] =
+    {'\\', '^', '$', '{', '}', '[', ']', '(', ')', '.', '*', '+', '?',
+        '|', '<', '>', '-', '&'};
+static const int NUM_COMMAND_CHARS = 18;
+
+static inline bool is_command_char(char test)
+{
+    int i;
+    for (i = 0; i < NUM_COMMAND_CHARS; i++) {
+        if (test == COMMAND_CHARS[i]) return true;
+    }
+    return false;
+}
+
+static state_node_p initialize_state_node(char state_char, bool any_char,
+                                bool state_fail, bool state_success)
+{
+    state_node_p new_node = malloc(sizeof(state_node));
+    new_node->receive_any_character = any_char;
+    new_node->state_char = state_char;
+    new_node->num_connections = 0;
+    new_node->connections_list = NULL;
+    new_node->state_fail = state_fail;
+    new_node->state_success = state_success;
+
+    return new_node;
+}
+void compile(char regex[])
+{
+    fprintf(stderr, "Compiling regex: '%s'\n", regex);
+    size_t regex_len = strlen(regex);
+    size_t i;
+
+    state_node_p initialize_state_node('\0', false, false, false);
+    for (i = 0; i < regex_len; i++) {
+        char cur_char = regex[i];
+        if (!is_command_char(cur_char)) {
+            fprintf(stderr, "success");
+        }
+    }
+}
 
 
 bool does_match(char base_string[], char regex[])
@@ -44,6 +90,7 @@ bool does_match(char base_string[], char regex[])
 
 int main(int argc, char **argv)
 {
-    bool res = does_match(argv[1], argv[2]);
-    fprintf(stderr, "Result: %d\n", res);
+    //bool res = does_match(argv[1], argv[2]);
+    compile(argv[1]);
+    //fprintf(stderr, "Result: %d\n", res);
 }
