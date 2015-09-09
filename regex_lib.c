@@ -5,6 +5,12 @@
 
 #include <stdio.h>
 
+typedef enum pattern_type_enum {
+    LITERAL_PATTERN,
+    RANGE,
+
+} pattern_type;
+
 typedef struct state_node {
     bool receive_any_character;
     char state_char;
@@ -17,6 +23,13 @@ typedef struct state_node {
 } state_node;
 
 typedef state_node *state_node_p;
+
+/*
+typedef struct compiled_regex_struct {
+    bool is_successfully_compiled;
+    state_node_p root_state;
+} compiled_regex;
+*/
 
 static const char COMMAND_CHARS[] =
     {'\\', '^', '$', '{', '}', '[', ']', '(', ')', '.', '*', '+', '?',
@@ -45,17 +58,20 @@ static state_node_p initialize_state_node(char state_char, bool any_char,
 
     return new_node;
 }
+
 void compile(char regex[])
 {
     fprintf(stderr, "Compiling regex: '%s'\n", regex);
     size_t regex_len = strlen(regex);
     size_t i;
 
-    state_node_p initialize_state_node('\0', false, false, false);
+    state_node_p root = initialize_state_node('\0', false, false, false);
+    state_node_p current_node = root;
     for (i = 0; i < regex_len; i++) {
         char cur_char = regex[i];
         if (!is_command_char(cur_char)) {
-            fprintf(stderr, "success");
+            current_node->num_connections = 1;
+            l
         }
     }
 }
